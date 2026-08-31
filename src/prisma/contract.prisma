@@ -1,0 +1,176 @@
+// use prisma-next
+
+enum Role {
+  ADMIN
+  ANALYST
+}
+
+enum Severity {
+  LOW
+  MEDIUM
+  HIGH
+  CRITICAL
+}
+
+enum IncidentStatus {
+  NEW
+  OPEN
+  INVESTIGATING
+  CONTAINED
+  RESOLVED
+  CLOSED
+}
+
+enum AssetType {
+  WORKSTATION
+  SERVER
+  DATABASE
+  CLOUD_VM
+  NET_DEVICE
+}
+
+model User {
+  id            String         @id
+  username      String         @unique
+  email         String         @unique
+  passwordHash  String
+  name          String
+  role          Role           @default(ANALYST)
+  createdAt     TimestamptzString @default(now())
+  updatedAt     temporal.updatedAtString()
+
+  // Relations
+  incidents     Incident[]     @relation("AssignedAnalyst")
+  notes         Note[]
+  auditLogs     AuditLog[]
+  sessions      Session[]
+}
+
+model Session {
+  id           String         @id
+  sessionToken String         @unique
+  userId       String
+  expiresAt    TimestamptzString
+  user         User           @relation(fields: [userId], references: [id])
+  createdAt    TimestamptzString @default(now())
+}
+
+model Asset {
+  id          String         @id
+  hostname    String         @unique
+  ipAddress   String         @unique
+  assetType   AssetType
+  owner       String
+  criticality Severity       @default(MEDIUM)
+  os          String
+  location    String
+  createdAt   TimestamptzString @default(now())
+  updatedAt   temporal.updatedAtString()
+
+  // Relations
+  incidents   IncidentAsset[]
+}
+
+model DetectionRule {
+  id          String         @id
+  name        String         @unique
+  description String
+  severity    Severity       @default(MEDIUM)
+  category    String
+  mitreAttack String
+  query       String
+  enabled     Boolean        @default(true)
+  createdAt   TimestamptzString @default(now())
+  updatedAt   temporal.updatedAtString()
+
+  // Relations
+  incidents   Incident[]
+}
+
+model Incident {
+  id              String         @id
+  title           String
+  description     String
+  status          IncidentStatus @default(NEW)
+  severity        Severity       @default(MEDIUM)
+  category        String
+  sourceIp        String?
+  destIp          String?
+  ruleId          String?
+  assignedToId    String?
+  createdAt       TimestamptzString @default(now())
+  updatedAt       temporal.updatedAtString()
+
+  // Relations
+  rule            DetectionRule?   @relation(fields: [ruleId], references: [id])
+  assignedTo      User?            @relation("AssignedAnalyst", fields: [assignedToId], references: [id])
+  assets          IncidentAsset[]
+  notes           Note[]
+  timelineEvents  EventTimeline[]
+  auditLogs       AuditLog[]
+  securityEvents  SecurityEvent[]
+}
+
+model IncidentAsset {
+  incidentId String
+  assetId    String
+  incident   Incident @relation(fields: [incidentId], references: [id])
+  asset      Asset    @relation(fields: [assetId], references: [id])
+
+  @@id([incidentId, assetId])
+}
+
+model EventTimeline {
+  id          String         @id
+  incidentId  String
+  eventTime   TimestamptzString @default(now())
+  title       String
+  description String
+  source      String
+  
+  incident    Incident       @relation(fields: [incidentId], references: [id])
+}
+
+model Note {
+  id         String         @id
+  incidentId String
+  userId     String
+  content    String
+  createdAt  TimestamptzString @default(now())
+  updatedAt  temporal.updatedAtString()
+
+  incident   Incident       @relation(fields: [incidentId], references: [id])
+  author     User           @relation(fields: [userId], references: [id])
+}
+
+model AuditLog {
+  id         String         @id
+  userId     String?
+  incidentId String?
+  action     String
+  details    String
+  ipAddress  String?
+  createdAt  TimestamptzString @default(now())
+
+  user       User?          @relation(fields: [userId], references: [id])
+  incident   Incident?      @relation(fields: [incidentId], references: [id])
+}
+
+model SecurityEvent {
+  id           String         @id
+  timestamp    TimestamptzString @default(now())
+  ruleName     String
+  category     String
+  severity     Severity       @default(MEDIUM)
+  sourceIp     String?
+  destIp       String?
+  targetHost   String?
+  details      String
+  mitreAttack  String?
+  incidentId   String?
+  createdAt    TimestamptzString @default(now())
+  updatedAt    temporal.updatedAtString()
+
+  // Relations
+  incident     Incident?      @relation(fields: [incidentId], references: [id])
+}

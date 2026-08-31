@@ -1,0 +1,2585 @@
+{
+  "schemaVersion": "1",
+  "targetFamily": "sql",
+  "target": "postgres",
+  "profileHash": "3916f444a8a17ad749191acf9e08dad97d1a327b88c2f1d45d12f240296aa8b2",
+  "roots": {
+    "asset": {
+      "model": "Asset",
+      "namespace": "public"
+    },
+    "auditLog": {
+      "model": "AuditLog",
+      "namespace": "public"
+    },
+    "detectionRule": {
+      "model": "DetectionRule",
+      "namespace": "public"
+    },
+    "eventTimeline": {
+      "model": "EventTimeline",
+      "namespace": "public"
+    },
+    "incident": {
+      "model": "Incident",
+      "namespace": "public"
+    },
+    "incidentAsset": {
+      "model": "IncidentAsset",
+      "namespace": "public"
+    },
+    "note": {
+      "model": "Note",
+      "namespace": "public"
+    },
+    "securityEvent": {
+      "model": "SecurityEvent",
+      "namespace": "public"
+    },
+    "session": {
+      "model": "Session",
+      "namespace": "public"
+    },
+    "user": {
+      "model": "User",
+      "namespace": "public"
+    }
+  },
+  "domain": {
+    "namespaces": {
+      "public": {
+        "enum": {
+          "AssetType": {
+            "codecId": "pg/text@1",
+            "members": [
+              {
+                "name": "WORKSTATION",
+                "value": "WORKSTATION"
+              },
+              {
+                "name": "SERVER",
+                "value": "SERVER"
+              },
+              {
+                "name": "DATABASE",
+                "value": "DATABASE"
+              },
+              {
+                "name": "CLOUD_VM",
+                "value": "CLOUD_VM"
+              },
+              {
+                "name": "NET_DEVICE",
+                "value": "NET_DEVICE"
+              }
+            ]
+          },
+          "IncidentStatus": {
+            "codecId": "pg/text@1",
+            "members": [
+              {
+                "name": "NEW",
+                "value": "NEW"
+              },
+              {
+                "name": "OPEN",
+                "value": "OPEN"
+              },
+              {
+                "name": "INVESTIGATING",
+                "value": "INVESTIGATING"
+              },
+              {
+                "name": "CONTAINED",
+                "value": "CONTAINED"
+              },
+              {
+                "name": "RESOLVED",
+                "value": "RESOLVED"
+              },
+              {
+                "name": "CLOSED",
+                "value": "CLOSED"
+              }
+            ]
+          },
+          "Role": {
+            "codecId": "pg/text@1",
+            "members": [
+              {
+                "name": "ADMIN",
+                "value": "ADMIN"
+              },
+              {
+                "name": "ANALYST",
+                "value": "ANALYST"
+              }
+            ]
+          },
+          "Severity": {
+            "codecId": "pg/text@1",
+            "members": [
+              {
+                "name": "LOW",
+                "value": "LOW"
+              },
+              {
+                "name": "MEDIUM",
+                "value": "MEDIUM"
+              },
+              {
+                "name": "HIGH",
+                "value": "HIGH"
+              },
+              {
+                "name": "CRITICAL",
+                "value": "CRITICAL"
+              }
+            ]
+          }
+        },
+        "models": {
+          "Asset": {
+            "fields": {
+              "assetType": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/text@1",
+                  "kind": "scalar"
+                },
+                "valueSet": {
+                  "entityKind": "enum",
+                  "entityName": "AssetType",
+                  "namespaceId": "public",
+                  "plane": "domain"
+                }
+              },
+              "createdAt": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/timestamptz-string@1",
+                  "kind": "scalar"
+                }
+              },
+              "criticality": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/text@1",
+                  "kind": "scalar"
+                },
+                "valueSet": {
+                  "entityKind": "enum",
+                  "entityName": "Severity",
+                  "namespaceId": "public",
+                  "plane": "domain"
+                }
+              },
+              "hostname": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/text@1",
+                  "kind": "scalar"
+                }
+              },
+              "id": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/text@1",
+                  "kind": "scalar"
+                }
+              },
+              "ipAddress": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/text@1",
+                  "kind": "scalar"
+                }
+              },
+              "location": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/text@1",
+                  "kind": "scalar"
+                }
+              },
+              "os": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/text@1",
+                  "kind": "scalar"
+                }
+              },
+              "owner": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/text@1",
+                  "kind": "scalar"
+                }
+              },
+              "updatedAt": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/timestamptz-string@1",
+                  "kind": "scalar"
+                }
+              }
+            },
+            "relations": {
+              "incidents": {
+                "cardinality": "1:N",
+                "on": {
+                  "localFields": [
+                    "id"
+                  ],
+                  "targetFields": [
+                    "assetId"
+                  ]
+                },
+                "to": {
+                  "model": "IncidentAsset",
+                  "namespace": "public"
+                }
+              }
+            },
+            "storage": {
+              "fields": {
+                "assetType": {
+                  "column": "assetType"
+                },
+                "createdAt": {
+                  "column": "createdAt"
+                },
+                "criticality": {
+                  "column": "criticality"
+                },
+                "hostname": {
+                  "column": "hostname"
+                },
+                "id": {
+                  "column": "id"
+                },
+                "ipAddress": {
+                  "column": "ipAddress"
+                },
+                "location": {
+                  "column": "location"
+                },
+                "os": {
+                  "column": "os"
+                },
+                "owner": {
+                  "column": "owner"
+                },
+                "updatedAt": {
+                  "column": "updatedAt"
+                }
+              },
+              "namespaceId": "public",
+              "table": "asset"
+            }
+          },
+          "AuditLog": {
+            "fields": {
+              "action": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/text@1",
+                  "kind": "scalar"
+                }
+              },
+              "createdAt": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/timestamptz-string@1",
+                  "kind": "scalar"
+                }
+              },
+              "details": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/text@1",
+                  "kind": "scalar"
+                }
+              },
+              "id": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/text@1",
+                  "kind": "scalar"
+                }
+              },
+              "incidentId": {
+                "nullable": true,
+                "type": {
+                  "codecId": "pg/text@1",
+                  "kind": "scalar"
+                }
+              },
+              "ipAddress": {
+                "nullable": true,
+                "type": {
+                  "codecId": "pg/text@1",
+                  "kind": "scalar"
+                }
+              },
+              "userId": {
+                "nullable": true,
+                "type": {
+                  "codecId": "pg/text@1",
+                  "kind": "scalar"
+                }
+              }
+            },
+            "relations": {
+              "incident": {
+                "cardinality": "N:1",
+                "on": {
+                  "localFields": [
+                    "incidentId"
+                  ],
+                  "targetFields": [
+                    "id"
+                  ]
+                },
+                "to": {
+                  "model": "Incident",
+                  "namespace": "public"
+                }
+              },
+              "user": {
+                "cardinality": "N:1",
+                "on": {
+                  "localFields": [
+                    "userId"
+                  ],
+                  "targetFields": [
+                    "id"
+                  ]
+                },
+                "to": {
+                  "model": "User",
+                  "namespace": "public"
+                }
+              }
+            },
+            "storage": {
+              "fields": {
+                "action": {
+                  "column": "action"
+                },
+                "createdAt": {
+                  "column": "createdAt"
+                },
+                "details": {
+                  "column": "details"
+                },
+                "id": {
+                  "column": "id"
+                },
+                "incidentId": {
+                  "column": "incidentId"
+                },
+                "ipAddress": {
+                  "column": "ipAddress"
+                },
+                "userId": {
+                  "column": "userId"
+                }
+              },
+              "namespaceId": "public",
+              "table": "auditLog"
+            }
+          },
+          "DetectionRule": {
+            "fields": {
+              "category": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/text@1",
+                  "kind": "scalar"
+                }
+              },
+              "createdAt": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/timestamptz-string@1",
+                  "kind": "scalar"
+                }
+              },
+              "description": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/text@1",
+                  "kind": "scalar"
+                }
+              },
+              "enabled": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/bool@1",
+                  "kind": "scalar"
+                }
+              },
+              "id": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/text@1",
+                  "kind": "scalar"
+                }
+              },
+              "mitreAttack": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/text@1",
+                  "kind": "scalar"
+                }
+              },
+              "name": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/text@1",
+                  "kind": "scalar"
+                }
+              },
+              "query": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/text@1",
+                  "kind": "scalar"
+                }
+              },
+              "severity": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/text@1",
+                  "kind": "scalar"
+                },
+                "valueSet": {
+                  "entityKind": "enum",
+                  "entityName": "Severity",
+                  "namespaceId": "public",
+                  "plane": "domain"
+                }
+              },
+              "updatedAt": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/timestamptz-string@1",
+                  "kind": "scalar"
+                }
+              }
+            },
+            "relations": {
+              "incidents": {
+                "cardinality": "1:N",
+                "on": {
+                  "localFields": [
+                    "id"
+                  ],
+                  "targetFields": [
+                    "ruleId"
+                  ]
+                },
+                "to": {
+                  "model": "Incident",
+                  "namespace": "public"
+                }
+              }
+            },
+            "storage": {
+              "fields": {
+                "category": {
+                  "column": "category"
+                },
+                "createdAt": {
+                  "column": "createdAt"
+                },
+                "description": {
+                  "column": "description"
+                },
+                "enabled": {
+                  "column": "enabled"
+                },
+                "id": {
+                  "column": "id"
+                },
+                "mitreAttack": {
+                  "column": "mitreAttack"
+                },
+                "name": {
+                  "column": "name"
+                },
+                "query": {
+                  "column": "query"
+                },
+                "severity": {
+                  "column": "severity"
+                },
+                "updatedAt": {
+                  "column": "updatedAt"
+                }
+              },
+              "namespaceId": "public",
+              "table": "detectionRule"
+            }
+          },
+          "EventTimeline": {
+            "fields": {
+              "description": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/text@1",
+                  "kind": "scalar"
+                }
+              },
+              "eventTime": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/timestamptz-string@1",
+                  "kind": "scalar"
+                }
+              },
+              "id": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/text@1",
+                  "kind": "scalar"
+                }
+              },
+              "incidentId": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/text@1",
+                  "kind": "scalar"
+                }
+              },
+              "source": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/text@1",
+                  "kind": "scalar"
+                }
+              },
+              "title": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/text@1",
+                  "kind": "scalar"
+                }
+              }
+            },
+            "relations": {
+              "incident": {
+                "cardinality": "N:1",
+                "on": {
+                  "localFields": [
+                    "incidentId"
+                  ],
+                  "targetFields": [
+                    "id"
+                  ]
+                },
+                "to": {
+                  "model": "Incident",
+                  "namespace": "public"
+                }
+              }
+            },
+            "storage": {
+              "fields": {
+                "description": {
+                  "column": "description"
+                },
+                "eventTime": {
+                  "column": "eventTime"
+                },
+                "id": {
+                  "column": "id"
+                },
+                "incidentId": {
+                  "column": "incidentId"
+                },
+                "source": {
+                  "column": "source"
+                },
+                "title": {
+                  "column": "title"
+                }
+              },
+              "namespaceId": "public",
+              "table": "eventTimeline"
+            }
+          },
+          "Incident": {
+            "fields": {
+              "assignedToId": {
+                "nullable": true,
+                "type": {
+                  "codecId": "pg/text@1",
+                  "kind": "scalar"
+                }
+              },
+              "category": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/text@1",
+                  "kind": "scalar"
+                }
+              },
+              "createdAt": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/timestamptz-string@1",
+                  "kind": "scalar"
+                }
+              },
+              "description": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/text@1",
+                  "kind": "scalar"
+                }
+              },
+              "destIp": {
+                "nullable": true,
+                "type": {
+                  "codecId": "pg/text@1",
+                  "kind": "scalar"
+                }
+              },
+              "id": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/text@1",
+                  "kind": "scalar"
+                }
+              },
+              "ruleId": {
+                "nullable": true,
+                "type": {
+                  "codecId": "pg/text@1",
+                  "kind": "scalar"
+                }
+              },
+              "severity": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/text@1",
+                  "kind": "scalar"
+                },
+                "valueSet": {
+                  "entityKind": "enum",
+                  "entityName": "Severity",
+                  "namespaceId": "public",
+                  "plane": "domain"
+                }
+              },
+              "sourceIp": {
+                "nullable": true,
+                "type": {
+                  "codecId": "pg/text@1",
+                  "kind": "scalar"
+                }
+              },
+              "status": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/text@1",
+                  "kind": "scalar"
+                },
+                "valueSet": {
+                  "entityKind": "enum",
+                  "entityName": "IncidentStatus",
+                  "namespaceId": "public",
+                  "plane": "domain"
+                }
+              },
+              "title": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/text@1",
+                  "kind": "scalar"
+                }
+              },
+              "updatedAt": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/timestamptz-string@1",
+                  "kind": "scalar"
+                }
+              }
+            },
+            "relations": {
+              "assets": {
+                "cardinality": "1:N",
+                "on": {
+                  "localFields": [
+                    "id"
+                  ],
+                  "targetFields": [
+                    "incidentId"
+                  ]
+                },
+                "to": {
+                  "model": "IncidentAsset",
+                  "namespace": "public"
+                }
+              },
+              "assignedTo": {
+                "cardinality": "N:1",
+                "on": {
+                  "localFields": [
+                    "assignedToId"
+                  ],
+                  "targetFields": [
+                    "id"
+                  ]
+                },
+                "to": {
+                  "model": "User",
+                  "namespace": "public"
+                }
+              },
+              "auditLogs": {
+                "cardinality": "1:N",
+                "on": {
+                  "localFields": [
+                    "id"
+                  ],
+                  "targetFields": [
+                    "incidentId"
+                  ]
+                },
+                "to": {
+                  "model": "AuditLog",
+                  "namespace": "public"
+                }
+              },
+              "notes": {
+                "cardinality": "1:N",
+                "on": {
+                  "localFields": [
+                    "id"
+                  ],
+                  "targetFields": [
+                    "incidentId"
+                  ]
+                },
+                "to": {
+                  "model": "Note",
+                  "namespace": "public"
+                }
+              },
+              "rule": {
+                "cardinality": "N:1",
+                "on": {
+                  "localFields": [
+                    "ruleId"
+                  ],
+                  "targetFields": [
+                    "id"
+                  ]
+                },
+                "to": {
+                  "model": "DetectionRule",
+                  "namespace": "public"
+                }
+              },
+              "securityEvents": {
+                "cardinality": "1:N",
+                "on": {
+                  "localFields": [
+                    "id"
+                  ],
+                  "targetFields": [
+                    "incidentId"
+                  ]
+                },
+                "to": {
+                  "model": "SecurityEvent",
+                  "namespace": "public"
+                }
+              },
+              "timelineEvents": {
+                "cardinality": "1:N",
+                "on": {
+                  "localFields": [
+                    "id"
+                  ],
+                  "targetFields": [
+                    "incidentId"
+                  ]
+                },
+                "to": {
+                  "model": "EventTimeline",
+                  "namespace": "public"
+                }
+              }
+            },
+            "storage": {
+              "fields": {
+                "assignedToId": {
+                  "column": "assignedToId"
+                },
+                "category": {
+                  "column": "category"
+                },
+                "createdAt": {
+                  "column": "createdAt"
+                },
+                "description": {
+                  "column": "description"
+                },
+                "destIp": {
+                  "column": "destIp"
+                },
+                "id": {
+                  "column": "id"
+                },
+                "ruleId": {
+                  "column": "ruleId"
+                },
+                "severity": {
+                  "column": "severity"
+                },
+                "sourceIp": {
+                  "column": "sourceIp"
+                },
+                "status": {
+                  "column": "status"
+                },
+                "title": {
+                  "column": "title"
+                },
+                "updatedAt": {
+                  "column": "updatedAt"
+                }
+              },
+              "namespaceId": "public",
+              "table": "incident"
+            }
+          },
+          "IncidentAsset": {
+            "fields": {
+              "assetId": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/text@1",
+                  "kind": "scalar"
+                }
+              },
+              "incidentId": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/text@1",
+                  "kind": "scalar"
+                }
+              }
+            },
+            "relations": {
+              "asset": {
+                "cardinality": "N:1",
+                "on": {
+                  "localFields": [
+                    "assetId"
+                  ],
+                  "targetFields": [
+                    "id"
+                  ]
+                },
+                "to": {
+                  "model": "Asset",
+                  "namespace": "public"
+                }
+              },
+              "incident": {
+                "cardinality": "N:1",
+                "on": {
+                  "localFields": [
+                    "incidentId"
+                  ],
+                  "targetFields": [
+                    "id"
+                  ]
+                },
+                "to": {
+                  "model": "Incident",
+                  "namespace": "public"
+                }
+              }
+            },
+            "storage": {
+              "fields": {
+                "assetId": {
+                  "column": "assetId"
+                },
+                "incidentId": {
+                  "column": "incidentId"
+                }
+              },
+              "namespaceId": "public",
+              "table": "incidentAsset"
+            }
+          },
+          "Note": {
+            "fields": {
+              "content": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/text@1",
+                  "kind": "scalar"
+                }
+              },
+              "createdAt": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/timestamptz-string@1",
+                  "kind": "scalar"
+                }
+              },
+              "id": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/text@1",
+                  "kind": "scalar"
+                }
+              },
+              "incidentId": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/text@1",
+                  "kind": "scalar"
+                }
+              },
+              "updatedAt": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/timestamptz-string@1",
+                  "kind": "scalar"
+                }
+              },
+              "userId": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/text@1",
+                  "kind": "scalar"
+                }
+              }
+            },
+            "relations": {
+              "author": {
+                "cardinality": "N:1",
+                "on": {
+                  "localFields": [
+                    "userId"
+                  ],
+                  "targetFields": [
+                    "id"
+                  ]
+                },
+                "to": {
+                  "model": "User",
+                  "namespace": "public"
+                }
+              },
+              "incident": {
+                "cardinality": "N:1",
+                "on": {
+                  "localFields": [
+                    "incidentId"
+                  ],
+                  "targetFields": [
+                    "id"
+                  ]
+                },
+                "to": {
+                  "model": "Incident",
+                  "namespace": "public"
+                }
+              }
+            },
+            "storage": {
+              "fields": {
+                "content": {
+                  "column": "content"
+                },
+                "createdAt": {
+                  "column": "createdAt"
+                },
+                "id": {
+                  "column": "id"
+                },
+                "incidentId": {
+                  "column": "incidentId"
+                },
+                "updatedAt": {
+                  "column": "updatedAt"
+                },
+                "userId": {
+                  "column": "userId"
+                }
+              },
+              "namespaceId": "public",
+              "table": "note"
+            }
+          },
+          "SecurityEvent": {
+            "fields": {
+              "category": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/text@1",
+                  "kind": "scalar"
+                }
+              },
+              "createdAt": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/timestamptz-string@1",
+                  "kind": "scalar"
+                }
+              },
+              "destIp": {
+                "nullable": true,
+                "type": {
+                  "codecId": "pg/text@1",
+                  "kind": "scalar"
+                }
+              },
+              "details": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/text@1",
+                  "kind": "scalar"
+                }
+              },
+              "id": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/text@1",
+                  "kind": "scalar"
+                }
+              },
+              "incidentId": {
+                "nullable": true,
+                "type": {
+                  "codecId": "pg/text@1",
+                  "kind": "scalar"
+                }
+              },
+              "mitreAttack": {
+                "nullable": true,
+                "type": {
+                  "codecId": "pg/text@1",
+                  "kind": "scalar"
+                }
+              },
+              "ruleName": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/text@1",
+                  "kind": "scalar"
+                }
+              },
+              "severity": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/text@1",
+                  "kind": "scalar"
+                },
+                "valueSet": {
+                  "entityKind": "enum",
+                  "entityName": "Severity",
+                  "namespaceId": "public",
+                  "plane": "domain"
+                }
+              },
+              "sourceIp": {
+                "nullable": true,
+                "type": {
+                  "codecId": "pg/text@1",
+                  "kind": "scalar"
+                }
+              },
+              "targetHost": {
+                "nullable": true,
+                "type": {
+                  "codecId": "pg/text@1",
+                  "kind": "scalar"
+                }
+              },
+              "timestamp": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/timestamptz-string@1",
+                  "kind": "scalar"
+                }
+              },
+              "updatedAt": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/timestamptz-string@1",
+                  "kind": "scalar"
+                }
+              }
+            },
+            "relations": {
+              "incident": {
+                "cardinality": "N:1",
+                "on": {
+                  "localFields": [
+                    "incidentId"
+                  ],
+                  "targetFields": [
+                    "id"
+                  ]
+                },
+                "to": {
+                  "model": "Incident",
+                  "namespace": "public"
+                }
+              }
+            },
+            "storage": {
+              "fields": {
+                "category": {
+                  "column": "category"
+                },
+                "createdAt": {
+                  "column": "createdAt"
+                },
+                "destIp": {
+                  "column": "destIp"
+                },
+                "details": {
+                  "column": "details"
+                },
+                "id": {
+                  "column": "id"
+                },
+                "incidentId": {
+                  "column": "incidentId"
+                },
+                "mitreAttack": {
+                  "column": "mitreAttack"
+                },
+                "ruleName": {
+                  "column": "ruleName"
+                },
+                "severity": {
+                  "column": "severity"
+                },
+                "sourceIp": {
+                  "column": "sourceIp"
+                },
+                "targetHost": {
+                  "column": "targetHost"
+                },
+                "timestamp": {
+                  "column": "timestamp"
+                },
+                "updatedAt": {
+                  "column": "updatedAt"
+                }
+              },
+              "namespaceId": "public",
+              "table": "securityEvent"
+            }
+          },
+          "Session": {
+            "fields": {
+              "createdAt": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/timestamptz-string@1",
+                  "kind": "scalar"
+                }
+              },
+              "expiresAt": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/timestamptz-string@1",
+                  "kind": "scalar"
+                }
+              },
+              "id": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/text@1",
+                  "kind": "scalar"
+                }
+              },
+              "sessionToken": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/text@1",
+                  "kind": "scalar"
+                }
+              },
+              "userId": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/text@1",
+                  "kind": "scalar"
+                }
+              }
+            },
+            "relations": {
+              "user": {
+                "cardinality": "N:1",
+                "on": {
+                  "localFields": [
+                    "userId"
+                  ],
+                  "targetFields": [
+                    "id"
+                  ]
+                },
+                "to": {
+                  "model": "User",
+                  "namespace": "public"
+                }
+              }
+            },
+            "storage": {
+              "fields": {
+                "createdAt": {
+                  "column": "createdAt"
+                },
+                "expiresAt": {
+                  "column": "expiresAt"
+                },
+                "id": {
+                  "column": "id"
+                },
+                "sessionToken": {
+                  "column": "sessionToken"
+                },
+                "userId": {
+                  "column": "userId"
+                }
+              },
+              "namespaceId": "public",
+              "table": "session"
+            }
+          },
+          "User": {
+            "fields": {
+              "createdAt": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/timestamptz-string@1",
+                  "kind": "scalar"
+                }
+              },
+              "email": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/text@1",
+                  "kind": "scalar"
+                }
+              },
+              "id": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/text@1",
+                  "kind": "scalar"
+                }
+              },
+              "name": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/text@1",
+                  "kind": "scalar"
+                }
+              },
+              "passwordHash": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/text@1",
+                  "kind": "scalar"
+                }
+              },
+              "role": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/text@1",
+                  "kind": "scalar"
+                },
+                "valueSet": {
+                  "entityKind": "enum",
+                  "entityName": "Role",
+                  "namespaceId": "public",
+                  "plane": "domain"
+                }
+              },
+              "updatedAt": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/timestamptz-string@1",
+                  "kind": "scalar"
+                }
+              },
+              "username": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/text@1",
+                  "kind": "scalar"
+                }
+              }
+            },
+            "relations": {
+              "auditLogs": {
+                "cardinality": "1:N",
+                "on": {
+                  "localFields": [
+                    "id"
+                  ],
+                  "targetFields": [
+                    "userId"
+                  ]
+                },
+                "to": {
+                  "model": "AuditLog",
+                  "namespace": "public"
+                }
+              },
+              "incidents": {
+                "cardinality": "1:N",
+                "on": {
+                  "localFields": [
+                    "id"
+                  ],
+                  "targetFields": [
+                    "assignedToId"
+                  ]
+                },
+                "to": {
+                  "model": "Incident",
+                  "namespace": "public"
+                }
+              },
+              "notes": {
+                "cardinality": "1:N",
+                "on": {
+                  "localFields": [
+                    "id"
+                  ],
+                  "targetFields": [
+                    "userId"
+                  ]
+                },
+                "to": {
+                  "model": "Note",
+                  "namespace": "public"
+                }
+              },
+              "sessions": {
+                "cardinality": "1:N",
+                "on": {
+                  "localFields": [
+                    "id"
+                  ],
+                  "targetFields": [
+                    "userId"
+                  ]
+                },
+                "to": {
+                  "model": "Session",
+                  "namespace": "public"
+                }
+              }
+            },
+            "storage": {
+              "fields": {
+                "createdAt": {
+                  "column": "createdAt"
+                },
+                "email": {
+                  "column": "email"
+                },
+                "id": {
+                  "column": "id"
+                },
+                "name": {
+                  "column": "name"
+                },
+                "passwordHash": {
+                  "column": "passwordHash"
+                },
+                "role": {
+                  "column": "role"
+                },
+                "updatedAt": {
+                  "column": "updatedAt"
+                },
+                "username": {
+                  "column": "username"
+                }
+              },
+              "namespaceId": "public",
+              "table": "user"
+            }
+          }
+        }
+      }
+    }
+  },
+  "storage": {
+    "namespaces": {
+      "public": {
+        "entries": {
+          "table": {
+            "asset": {
+              "checks": [
+                {
+                  "expression": "\"assetType\" IN ('WORKSTATION', 'SERVER', 'DATABASE', 'CLOUD_VM', 'NET_DEVICE')",
+                  "name": "asset_assetType_check_8693f726",
+                  "prefix": "asset_assetType_check"
+                },
+                {
+                  "expression": "\"criticality\" IN ('LOW', 'MEDIUM', 'HIGH', 'CRITICAL')",
+                  "name": "asset_criticality_check_cc1f9cbc",
+                  "prefix": "asset_criticality_check"
+                }
+              ],
+              "columns": {
+                "assetType": {
+                  "codecId": "pg/text@1",
+                  "nativeType": "text",
+                  "nullable": false,
+                  "valueSet": {
+                    "entityKind": "valueSet",
+                    "entityName": "AssetType",
+                    "namespaceId": "public",
+                    "plane": "storage"
+                  }
+                },
+                "createdAt": {
+                  "codecId": "pg/timestamptz-string@1",
+                  "default": {
+                    "expression": "now()",
+                    "kind": "function"
+                  },
+                  "nativeType": "timestamptz",
+                  "nullable": false
+                },
+                "criticality": {
+                  "codecId": "pg/text@1",
+                  "default": {
+                    "kind": "literal",
+                    "value": "MEDIUM"
+                  },
+                  "nativeType": "text",
+                  "nullable": false,
+                  "valueSet": {
+                    "entityKind": "valueSet",
+                    "entityName": "Severity",
+                    "namespaceId": "public",
+                    "plane": "storage"
+                  }
+                },
+                "hostname": {
+                  "codecId": "pg/text@1",
+                  "nativeType": "text",
+                  "nullable": false
+                },
+                "id": {
+                  "codecId": "pg/text@1",
+                  "nativeType": "text",
+                  "nullable": false
+                },
+                "ipAddress": {
+                  "codecId": "pg/text@1",
+                  "nativeType": "text",
+                  "nullable": false
+                },
+                "location": {
+                  "codecId": "pg/text@1",
+                  "nativeType": "text",
+                  "nullable": false
+                },
+                "os": {
+                  "codecId": "pg/text@1",
+                  "nativeType": "text",
+                  "nullable": false
+                },
+                "owner": {
+                  "codecId": "pg/text@1",
+                  "nativeType": "text",
+                  "nullable": false
+                },
+                "updatedAt": {
+                  "codecId": "pg/timestamptz-string@1",
+                  "nativeType": "timestamptz",
+                  "nullable": false
+                }
+              },
+              "foreignKeys": [],
+              "indexes": [],
+              "primaryKey": {
+                "columns": [
+                  "id"
+                ]
+              },
+              "uniques": [
+                {
+                  "columns": [
+                    "hostname"
+                  ]
+                },
+                {
+                  "columns": [
+                    "ipAddress"
+                  ]
+                }
+              ]
+            },
+            "auditLog": {
+              "columns": {
+                "action": {
+                  "codecId": "pg/text@1",
+                  "nativeType": "text",
+                  "nullable": false
+                },
+                "createdAt": {
+                  "codecId": "pg/timestamptz-string@1",
+                  "default": {
+                    "expression": "now()",
+                    "kind": "function"
+                  },
+                  "nativeType": "timestamptz",
+                  "nullable": false
+                },
+                "details": {
+                  "codecId": "pg/text@1",
+                  "nativeType": "text",
+                  "nullable": false
+                },
+                "id": {
+                  "codecId": "pg/text@1",
+                  "nativeType": "text",
+                  "nullable": false
+                },
+                "incidentId": {
+                  "codecId": "pg/text@1",
+                  "nativeType": "text",
+                  "nullable": true
+                },
+                "ipAddress": {
+                  "codecId": "pg/text@1",
+                  "nativeType": "text",
+                  "nullable": true
+                },
+                "userId": {
+                  "codecId": "pg/text@1",
+                  "nativeType": "text",
+                  "nullable": true
+                }
+              },
+              "foreignKeys": [
+                {
+                  "source": {
+                    "columns": [
+                      "userId"
+                    ],
+                    "namespaceId": "public",
+                    "tableName": "auditLog"
+                  },
+                  "target": {
+                    "columns": [
+                      "id"
+                    ],
+                    "namespaceId": "public",
+                    "tableName": "user"
+                  }
+                },
+                {
+                  "source": {
+                    "columns": [
+                      "incidentId"
+                    ],
+                    "namespaceId": "public",
+                    "tableName": "auditLog"
+                  },
+                  "target": {
+                    "columns": [
+                      "id"
+                    ],
+                    "namespaceId": "public",
+                    "tableName": "incident"
+                  }
+                }
+              ],
+              "indexes": [
+                {
+                  "columns": [
+                    "incidentId"
+                  ],
+                  "name": "auditLog_incidentId_idx_20b6f3c9",
+                  "prefix": "auditLog_incidentId_idx",
+                  "unique": false
+                },
+                {
+                  "columns": [
+                    "userId"
+                  ],
+                  "name": "auditLog_userId_idx_a489d58a",
+                  "prefix": "auditLog_userId_idx",
+                  "unique": false
+                }
+              ],
+              "primaryKey": {
+                "columns": [
+                  "id"
+                ]
+              },
+              "uniques": []
+            },
+            "detectionRule": {
+              "checks": [
+                {
+                  "expression": "\"severity\" IN ('LOW', 'MEDIUM', 'HIGH', 'CRITICAL')",
+                  "name": "detectionRule_severity_check_5e5a5e80",
+                  "prefix": "detectionRule_severity_check"
+                }
+              ],
+              "columns": {
+                "category": {
+                  "codecId": "pg/text@1",
+                  "nativeType": "text",
+                  "nullable": false
+                },
+                "createdAt": {
+                  "codecId": "pg/timestamptz-string@1",
+                  "default": {
+                    "expression": "now()",
+                    "kind": "function"
+                  },
+                  "nativeType": "timestamptz",
+                  "nullable": false
+                },
+                "description": {
+                  "codecId": "pg/text@1",
+                  "nativeType": "text",
+                  "nullable": false
+                },
+                "enabled": {
+                  "codecId": "pg/bool@1",
+                  "default": {
+                    "kind": "literal",
+                    "value": true
+                  },
+                  "nativeType": "bool",
+                  "nullable": false
+                },
+                "id": {
+                  "codecId": "pg/text@1",
+                  "nativeType": "text",
+                  "nullable": false
+                },
+                "mitreAttack": {
+                  "codecId": "pg/text@1",
+                  "nativeType": "text",
+                  "nullable": false
+                },
+                "name": {
+                  "codecId": "pg/text@1",
+                  "nativeType": "text",
+                  "nullable": false
+                },
+                "query": {
+                  "codecId": "pg/text@1",
+                  "nativeType": "text",
+                  "nullable": false
+                },
+                "severity": {
+                  "codecId": "pg/text@1",
+                  "default": {
+                    "kind": "literal",
+                    "value": "MEDIUM"
+                  },
+                  "nativeType": "text",
+                  "nullable": false,
+                  "valueSet": {
+                    "entityKind": "valueSet",
+                    "entityName": "Severity",
+                    "namespaceId": "public",
+                    "plane": "storage"
+                  }
+                },
+                "updatedAt": {
+                  "codecId": "pg/timestamptz-string@1",
+                  "nativeType": "timestamptz",
+                  "nullable": false
+                }
+              },
+              "foreignKeys": [],
+              "indexes": [],
+              "primaryKey": {
+                "columns": [
+                  "id"
+                ]
+              },
+              "uniques": [
+                {
+                  "columns": [
+                    "name"
+                  ]
+                }
+              ]
+            },
+            "eventTimeline": {
+              "columns": {
+                "description": {
+                  "codecId": "pg/text@1",
+                  "nativeType": "text",
+                  "nullable": false
+                },
+                "eventTime": {
+                  "codecId": "pg/timestamptz-string@1",
+                  "default": {
+                    "expression": "now()",
+                    "kind": "function"
+                  },
+                  "nativeType": "timestamptz",
+                  "nullable": false
+                },
+                "id": {
+                  "codecId": "pg/text@1",
+                  "nativeType": "text",
+                  "nullable": false
+                },
+                "incidentId": {
+                  "codecId": "pg/text@1",
+                  "nativeType": "text",
+                  "nullable": false
+                },
+                "source": {
+                  "codecId": "pg/text@1",
+                  "nativeType": "text",
+                  "nullable": false
+                },
+                "title": {
+                  "codecId": "pg/text@1",
+                  "nativeType": "text",
+                  "nullable": false
+                }
+              },
+              "foreignKeys": [
+                {
+                  "source": {
+                    "columns": [
+                      "incidentId"
+                    ],
+                    "namespaceId": "public",
+                    "tableName": "eventTimeline"
+                  },
+                  "target": {
+                    "columns": [
+                      "id"
+                    ],
+                    "namespaceId": "public",
+                    "tableName": "incident"
+                  }
+                }
+              ],
+              "indexes": [
+                {
+                  "columns": [
+                    "incidentId"
+                  ],
+                  "name": "eventTimeline_incidentId_idx_20b6f3c9",
+                  "prefix": "eventTimeline_incidentId_idx",
+                  "unique": false
+                }
+              ],
+              "primaryKey": {
+                "columns": [
+                  "id"
+                ]
+              },
+              "uniques": []
+            },
+            "incident": {
+              "checks": [
+                {
+                  "expression": "\"severity\" IN ('LOW', 'MEDIUM', 'HIGH', 'CRITICAL')",
+                  "name": "incident_severity_check_5e5a5e80",
+                  "prefix": "incident_severity_check"
+                },
+                {
+                  "expression": "\"status\" IN ('NEW', 'OPEN', 'INVESTIGATING', 'CONTAINED', 'RESOLVED', 'CLOSED')",
+                  "name": "incident_status_check_ee45d6a7",
+                  "prefix": "incident_status_check"
+                }
+              ],
+              "columns": {
+                "assignedToId": {
+                  "codecId": "pg/text@1",
+                  "nativeType": "text",
+                  "nullable": true
+                },
+                "category": {
+                  "codecId": "pg/text@1",
+                  "nativeType": "text",
+                  "nullable": false
+                },
+                "createdAt": {
+                  "codecId": "pg/timestamptz-string@1",
+                  "default": {
+                    "expression": "now()",
+                    "kind": "function"
+                  },
+                  "nativeType": "timestamptz",
+                  "nullable": false
+                },
+                "description": {
+                  "codecId": "pg/text@1",
+                  "nativeType": "text",
+                  "nullable": false
+                },
+                "destIp": {
+                  "codecId": "pg/text@1",
+                  "nativeType": "text",
+                  "nullable": true
+                },
+                "id": {
+                  "codecId": "pg/text@1",
+                  "nativeType": "text",
+                  "nullable": false
+                },
+                "ruleId": {
+                  "codecId": "pg/text@1",
+                  "nativeType": "text",
+                  "nullable": true
+                },
+                "severity": {
+                  "codecId": "pg/text@1",
+                  "default": {
+                    "kind": "literal",
+                    "value": "MEDIUM"
+                  },
+                  "nativeType": "text",
+                  "nullable": false,
+                  "valueSet": {
+                    "entityKind": "valueSet",
+                    "entityName": "Severity",
+                    "namespaceId": "public",
+                    "plane": "storage"
+                  }
+                },
+                "sourceIp": {
+                  "codecId": "pg/text@1",
+                  "nativeType": "text",
+                  "nullable": true
+                },
+                "status": {
+                  "codecId": "pg/text@1",
+                  "default": {
+                    "kind": "literal",
+                    "value": "NEW"
+                  },
+                  "nativeType": "text",
+                  "nullable": false,
+                  "valueSet": {
+                    "entityKind": "valueSet",
+                    "entityName": "IncidentStatus",
+                    "namespaceId": "public",
+                    "plane": "storage"
+                  }
+                },
+                "title": {
+                  "codecId": "pg/text@1",
+                  "nativeType": "text",
+                  "nullable": false
+                },
+                "updatedAt": {
+                  "codecId": "pg/timestamptz-string@1",
+                  "nativeType": "timestamptz",
+                  "nullable": false
+                }
+              },
+              "foreignKeys": [
+                {
+                  "source": {
+                    "columns": [
+                      "ruleId"
+                    ],
+                    "namespaceId": "public",
+                    "tableName": "incident"
+                  },
+                  "target": {
+                    "columns": [
+                      "id"
+                    ],
+                    "namespaceId": "public",
+                    "tableName": "detectionRule"
+                  }
+                },
+                {
+                  "source": {
+                    "columns": [
+                      "assignedToId"
+                    ],
+                    "namespaceId": "public",
+                    "tableName": "incident"
+                  },
+                  "target": {
+                    "columns": [
+                      "id"
+                    ],
+                    "namespaceId": "public",
+                    "tableName": "user"
+                  }
+                }
+              ],
+              "indexes": [
+                {
+                  "columns": [
+                    "assignedToId"
+                  ],
+                  "name": "incident_assignedToId_idx_45a131c2",
+                  "prefix": "incident_assignedToId_idx",
+                  "unique": false
+                },
+                {
+                  "columns": [
+                    "ruleId"
+                  ],
+                  "name": "incident_ruleId_idx_05e770f7",
+                  "prefix": "incident_ruleId_idx",
+                  "unique": false
+                }
+              ],
+              "primaryKey": {
+                "columns": [
+                  "id"
+                ]
+              },
+              "uniques": []
+            },
+            "incidentAsset": {
+              "columns": {
+                "assetId": {
+                  "codecId": "pg/text@1",
+                  "nativeType": "text",
+                  "nullable": false
+                },
+                "incidentId": {
+                  "codecId": "pg/text@1",
+                  "nativeType": "text",
+                  "nullable": false
+                }
+              },
+              "foreignKeys": [
+                {
+                  "source": {
+                    "columns": [
+                      "incidentId"
+                    ],
+                    "namespaceId": "public",
+                    "tableName": "incidentAsset"
+                  },
+                  "target": {
+                    "columns": [
+                      "id"
+                    ],
+                    "namespaceId": "public",
+                    "tableName": "incident"
+                  }
+                },
+                {
+                  "source": {
+                    "columns": [
+                      "assetId"
+                    ],
+                    "namespaceId": "public",
+                    "tableName": "incidentAsset"
+                  },
+                  "target": {
+                    "columns": [
+                      "id"
+                    ],
+                    "namespaceId": "public",
+                    "tableName": "asset"
+                  }
+                }
+              ],
+              "indexes": [
+                {
+                  "columns": [
+                    "assetId"
+                  ],
+                  "name": "incidentAsset_assetId_idx_4ebe630a",
+                  "prefix": "incidentAsset_assetId_idx",
+                  "unique": false
+                },
+                {
+                  "columns": [
+                    "incidentId"
+                  ],
+                  "name": "incidentAsset_incidentId_idx_20b6f3c9",
+                  "prefix": "incidentAsset_incidentId_idx",
+                  "unique": false
+                }
+              ],
+              "primaryKey": {
+                "columns": [
+                  "incidentId",
+                  "assetId"
+                ]
+              },
+              "uniques": []
+            },
+            "note": {
+              "columns": {
+                "content": {
+                  "codecId": "pg/text@1",
+                  "nativeType": "text",
+                  "nullable": false
+                },
+                "createdAt": {
+                  "codecId": "pg/timestamptz-string@1",
+                  "default": {
+                    "expression": "now()",
+                    "kind": "function"
+                  },
+                  "nativeType": "timestamptz",
+                  "nullable": false
+                },
+                "id": {
+                  "codecId": "pg/text@1",
+                  "nativeType": "text",
+                  "nullable": false
+                },
+                "incidentId": {
+                  "codecId": "pg/text@1",
+                  "nativeType": "text",
+                  "nullable": false
+                },
+                "updatedAt": {
+                  "codecId": "pg/timestamptz-string@1",
+                  "nativeType": "timestamptz",
+                  "nullable": false
+                },
+                "userId": {
+                  "codecId": "pg/text@1",
+                  "nativeType": "text",
+                  "nullable": false
+                }
+              },
+              "foreignKeys": [
+                {
+                  "source": {
+                    "columns": [
+                      "incidentId"
+                    ],
+                    "namespaceId": "public",
+                    "tableName": "note"
+                  },
+                  "target": {
+                    "columns": [
+                      "id"
+                    ],
+                    "namespaceId": "public",
+                    "tableName": "incident"
+                  }
+                },
+                {
+                  "source": {
+                    "columns": [
+                      "userId"
+                    ],
+                    "namespaceId": "public",
+                    "tableName": "note"
+                  },
+                  "target": {
+                    "columns": [
+                      "id"
+                    ],
+                    "namespaceId": "public",
+                    "tableName": "user"
+                  }
+                }
+              ],
+              "indexes": [
+                {
+                  "columns": [
+                    "incidentId"
+                  ],
+                  "name": "note_incidentId_idx_20b6f3c9",
+                  "prefix": "note_incidentId_idx",
+                  "unique": false
+                },
+                {
+                  "columns": [
+                    "userId"
+                  ],
+                  "name": "note_userId_idx_a489d58a",
+                  "prefix": "note_userId_idx",
+                  "unique": false
+                }
+              ],
+              "primaryKey": {
+                "columns": [
+                  "id"
+                ]
+              },
+              "uniques": []
+            },
+            "securityEvent": {
+              "checks": [
+                {
+                  "expression": "\"severity\" IN ('LOW', 'MEDIUM', 'HIGH', 'CRITICAL')",
+                  "name": "securityEvent_severity_check_5e5a5e80",
+                  "prefix": "securityEvent_severity_check"
+                }
+              ],
+              "columns": {
+                "category": {
+                  "codecId": "pg/text@1",
+                  "nativeType": "text",
+                  "nullable": false
+                },
+                "createdAt": {
+                  "codecId": "pg/timestamptz-string@1",
+                  "default": {
+                    "expression": "now()",
+                    "kind": "function"
+                  },
+                  "nativeType": "timestamptz",
+                  "nullable": false
+                },
+                "destIp": {
+                  "codecId": "pg/text@1",
+                  "nativeType": "text",
+                  "nullable": true
+                },
+                "details": {
+                  "codecId": "pg/text@1",
+                  "nativeType": "text",
+                  "nullable": false
+                },
+                "id": {
+                  "codecId": "pg/text@1",
+                  "nativeType": "text",
+                  "nullable": false
+                },
+                "incidentId": {
+                  "codecId": "pg/text@1",
+                  "nativeType": "text",
+                  "nullable": true
+                },
+                "mitreAttack": {
+                  "codecId": "pg/text@1",
+                  "nativeType": "text",
+                  "nullable": true
+                },
+                "ruleName": {
+                  "codecId": "pg/text@1",
+                  "nativeType": "text",
+                  "nullable": false
+                },
+                "severity": {
+                  "codecId": "pg/text@1",
+                  "default": {
+                    "kind": "literal",
+                    "value": "MEDIUM"
+                  },
+                  "nativeType": "text",
+                  "nullable": false,
+                  "valueSet": {
+                    "entityKind": "valueSet",
+                    "entityName": "Severity",
+                    "namespaceId": "public",
+                    "plane": "storage"
+                  }
+                },
+                "sourceIp": {
+                  "codecId": "pg/text@1",
+                  "nativeType": "text",
+                  "nullable": true
+                },
+                "targetHost": {
+                  "codecId": "pg/text@1",
+                  "nativeType": "text",
+                  "nullable": true
+                },
+                "timestamp": {
+                  "codecId": "pg/timestamptz-string@1",
+                  "default": {
+                    "expression": "now()",
+                    "kind": "function"
+                  },
+                  "nativeType": "timestamptz",
+                  "nullable": false
+                },
+                "updatedAt": {
+                  "codecId": "pg/timestamptz-string@1",
+                  "nativeType": "timestamptz",
+                  "nullable": false
+                }
+              },
+              "foreignKeys": [
+                {
+                  "source": {
+                    "columns": [
+                      "incidentId"
+                    ],
+                    "namespaceId": "public",
+                    "tableName": "securityEvent"
+                  },
+                  "target": {
+                    "columns": [
+                      "id"
+                    ],
+                    "namespaceId": "public",
+                    "tableName": "incident"
+                  }
+                }
+              ],
+              "indexes": [
+                {
+                  "columns": [
+                    "incidentId"
+                  ],
+                  "name": "securityEvent_incidentId_idx_20b6f3c9",
+                  "prefix": "securityEvent_incidentId_idx",
+                  "unique": false
+                }
+              ],
+              "primaryKey": {
+                "columns": [
+                  "id"
+                ]
+              },
+              "uniques": []
+            },
+            "session": {
+              "columns": {
+                "createdAt": {
+                  "codecId": "pg/timestamptz-string@1",
+                  "default": {
+                    "expression": "now()",
+                    "kind": "function"
+                  },
+                  "nativeType": "timestamptz",
+                  "nullable": false
+                },
+                "expiresAt": {
+                  "codecId": "pg/timestamptz-string@1",
+                  "nativeType": "timestamptz",
+                  "nullable": false
+                },
+                "id": {
+                  "codecId": "pg/text@1",
+                  "nativeType": "text",
+                  "nullable": false
+                },
+                "sessionToken": {
+                  "codecId": "pg/text@1",
+                  "nativeType": "text",
+                  "nullable": false
+                },
+                "userId": {
+                  "codecId": "pg/text@1",
+                  "nativeType": "text",
+                  "nullable": false
+                }
+              },
+              "foreignKeys": [
+                {
+                  "source": {
+                    "columns": [
+                      "userId"
+                    ],
+                    "namespaceId": "public",
+                    "tableName": "session"
+                  },
+                  "target": {
+                    "columns": [
+                      "id"
+                    ],
+                    "namespaceId": "public",
+                    "tableName": "user"
+                  }
+                }
+              ],
+              "indexes": [
+                {
+                  "columns": [
+                    "userId"
+                  ],
+                  "name": "session_userId_idx_a489d58a",
+                  "prefix": "session_userId_idx",
+                  "unique": false
+                }
+              ],
+              "primaryKey": {
+                "columns": [
+                  "id"
+                ]
+              },
+              "uniques": [
+                {
+                  "columns": [
+                    "sessionToken"
+                  ]
+                }
+              ]
+            },
+            "user": {
+              "checks": [
+                {
+                  "expression": "\"role\" IN ('ADMIN', 'ANALYST')",
+                  "name": "user_role_check_f946d65c",
+                  "prefix": "user_role_check"
+                }
+              ],
+              "columns": {
+                "createdAt": {
+                  "codecId": "pg/timestamptz-string@1",
+                  "default": {
+                    "expression": "now()",
+                    "kind": "function"
+                  },
+                  "nativeType": "timestamptz",
+                  "nullable": false
+                },
+                "email": {
+                  "codecId": "pg/text@1",
+                  "nativeType": "text",
+                  "nullable": false
+                },
+                "id": {
+                  "codecId": "pg/text@1",
+                  "nativeType": "text",
+                  "nullable": false
+                },
+                "name": {
+                  "codecId": "pg/text@1",
+                  "nativeType": "text",
+                  "nullable": false
+                },
+                "passwordHash": {
+                  "codecId": "pg/text@1",
+                  "nativeType": "text",
+                  "nullable": false
+                },
+                "role": {
+                  "codecId": "pg/text@1",
+                  "default": {
+                    "kind": "literal",
+                    "value": "ANALYST"
+                  },
+                  "nativeType": "text",
+                  "nullable": false,
+                  "valueSet": {
+                    "entityKind": "valueSet",
+                    "entityName": "Role",
+                    "namespaceId": "public",
+                    "plane": "storage"
+                  }
+                },
+                "updatedAt": {
+                  "codecId": "pg/timestamptz-string@1",
+                  "nativeType": "timestamptz",
+                  "nullable": false
+                },
+                "username": {
+                  "codecId": "pg/text@1",
+                  "nativeType": "text",
+                  "nullable": false
+                }
+              },
+              "foreignKeys": [],
+              "indexes": [],
+              "primaryKey": {
+                "columns": [
+                  "id"
+                ]
+              },
+              "uniques": [
+                {
+                  "columns": [
+                    "username"
+                  ]
+                },
+                {
+                  "columns": [
+                    "email"
+                  ]
+                }
+              ]
+            }
+          },
+          "valueSet": {
+            "AssetType": {
+              "kind": "valueSet",
+              "values": [
+                "WORKSTATION",
+                "SERVER",
+                "DATABASE",
+                "CLOUD_VM",
+                "NET_DEVICE"
+              ]
+            },
+            "IncidentStatus": {
+              "kind": "valueSet",
+              "values": [
+                "NEW",
+                "OPEN",
+                "INVESTIGATING",
+                "CONTAINED",
+                "RESOLVED",
+                "CLOSED"
+              ]
+            },
+            "Role": {
+              "kind": "valueSet",
+              "values": [
+                "ADMIN",
+                "ANALYST"
+              ]
+            },
+            "Severity": {
+              "kind": "valueSet",
+              "values": [
+                "LOW",
+                "MEDIUM",
+                "HIGH",
+                "CRITICAL"
+              ]
+            }
+          }
+        },
+        "id": "public",
+        "kind": "postgres-schema"
+      }
+    },
+    "storageHash": "c0c7e946da2acac3a49a895b59a331b0cd9af322ad3ae9acfccbf099c9348646"
+  },
+  "execution": {
+    "executionHash": "b955c8f10f49493207339d00d15a5a26614fb38b2e4fcc803416374e1d385cd6",
+    "mutations": {
+      "defaults": [
+        {
+          "onCreate": {
+            "id": "timestampNow",
+            "kind": "generator"
+          },
+          "onUpdate": {
+            "id": "timestampNow",
+            "kind": "generator"
+          },
+          "ref": {
+            "column": "updatedAt",
+            "namespace": "public",
+            "table": "asset"
+          }
+        },
+        {
+          "onCreate": {
+            "id": "timestampNow",
+            "kind": "generator"
+          },
+          "onUpdate": {
+            "id": "timestampNow",
+            "kind": "generator"
+          },
+          "ref": {
+            "column": "updatedAt",
+            "namespace": "public",
+            "table": "detectionRule"
+          }
+        },
+        {
+          "onCreate": {
+            "id": "timestampNow",
+            "kind": "generator"
+          },
+          "onUpdate": {
+            "id": "timestampNow",
+            "kind": "generator"
+          },
+          "ref": {
+            "column": "updatedAt",
+            "namespace": "public",
+            "table": "incident"
+          }
+        },
+        {
+          "onCreate": {
+            "id": "timestampNow",
+            "kind": "generator"
+          },
+          "onUpdate": {
+            "id": "timestampNow",
+            "kind": "generator"
+          },
+          "ref": {
+            "column": "updatedAt",
+            "namespace": "public",
+            "table": "note"
+          }
+        },
+        {
+          "onCreate": {
+            "id": "timestampNow",
+            "kind": "generator"
+          },
+          "onUpdate": {
+            "id": "timestampNow",
+            "kind": "generator"
+          },
+          "ref": {
+            "column": "updatedAt",
+            "namespace": "public",
+            "table": "securityEvent"
+          }
+        },
+        {
+          "onCreate": {
+            "id": "timestampNow",
+            "kind": "generator"
+          },
+          "onUpdate": {
+            "id": "timestampNow",
+            "kind": "generator"
+          },
+          "ref": {
+            "column": "updatedAt",
+            "namespace": "public",
+            "table": "user"
+          }
+        }
+      ]
+    }
+  },
+  "capabilities": {
+    "postgres": {
+      "distinctOn": true,
+      "jsonAgg": true,
+      "lateral": true,
+      "limit": true,
+      "orderBy": true,
+      "returning": true
+    },
+    "sql": {
+      "checkConstraint": true,
+      "defaultInInsert": true,
+      "enums": true,
+      "lateral": true,
+      "returning": true,
+      "scalarList": true
+    }
+  },
+  "extensions": {},
+  "meta": {},
+  "_generated": {
+    "warning": "⚠️  GENERATED FILE - DO NOT EDIT",
+    "message": "This file is automatically generated by \"prisma contract emit\".",
+    "regenerate": "To regenerate, run: prisma contract emit"
+  }
+}

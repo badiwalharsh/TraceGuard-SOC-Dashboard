@@ -1,0 +1,183 @@
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+enum Role {
+  ADMIN
+  ANALYST
+}
+
+enum Severity {
+  LOW
+  MEDIUM
+  HIGH
+  CRITICAL
+}
+
+enum IncidentStatus {
+  NEW
+  OPEN
+  INVESTIGATING
+  CONTAINED
+  RESOLVED
+  CLOSED
+}
+
+enum AssetType {
+  WORKSTATION
+  SERVER
+  DATABASE
+  CLOUD_VM
+  NET_DEVICE
+}
+
+model User {
+  id            String         @id @default(uuid())
+  username      String         @unique
+  email         String         @unique
+  passwordHash  String
+  name          String
+  role          Role           @default(ANALYST)
+  createdAt     DateTime       @default(now())
+  updatedAt     DateTime       @updatedAt
+  
+  // Relations
+  incidents     Incident[]     @relation("AssignedAnalyst")
+  notes         Note[]
+  auditLogs     AuditLog[]
+  sessions      Session[]
+}
+
+model Session {
+  id           String   @id @default(uuid())
+  sessionToken String   @unique
+  userId       String
+  expiresAt    DateTime
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  
+  createdAt    DateTime @default(now())
+}
+
+model Asset {
+  id          String    @id @default(uuid())
+  hostname    String    @unique
+  ipAddress   String    @unique
+  assetType   AssetType
+  owner       String
+  criticality Severity  @default(MEDIUM)
+  os          String
+  location    String
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+
+  // Relations
+  incidents   IncidentAsset[]
+}
+
+model DetectionRule {
+  id          String   @id @default(uuid())
+  name        String   @unique
+  description String
+  severity    Severity @default(MEDIUM)
+  category    String   // e.g. Credential Access, Privilege Escalation, Exfiltration
+  mitreAttack String   // e.g. T1078, T1059
+  query       String   // Abstract query or detection logic representation
+  enabled     Boolean  @default(true)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  // Relations
+  incidents   Incident[]
+}
+
+model Incident {
+  id              String         @id @default(uuid())
+  title           String
+  description     String
+  status          IncidentStatus @default(NEW)
+  severity        Severity       @default(MEDIUM)
+  category        String         // e.g., Ransomware, Data Exfiltration
+  sourceIp        String?
+  destIp          String?
+  ruleId          String?
+  assignedToId    String?
+  createdAt       DateTime       @default(now())
+  updatedAt       DateTime       @updatedAt
+
+  // Relations
+  rule            DetectionRule?   @relation(fields: [ruleId], references: [id], onDelete: SetNull)
+  assignedTo      User?            @relation("AssignedAnalyst", fields: [assignedToId], references: [id], onDelete: SetNull)
+  assets          IncidentAsset[]
+  notes           Note[]
+  timelineEvents  EventTimeline[]
+  auditLogs       AuditLog[]
+  securityEvents  SecurityEvent[]
+}
+
+// Join table for many-to-many relationship between Incidents and Assets
+model IncidentAsset {
+  incidentId String
+  assetId    String
+  incident   Incident @relation(fields: [incidentId], references: [id], onDelete: Cascade)
+  asset      Asset    @relation(fields: [assetId], references: [id], onDelete: Cascade)
+
+  @@id([incidentId, assetId])
+}
+
+model EventTimeline {
+  id          String   @id @default(uuid())
+  incidentId  String
+  eventTime   DateTime @default(now())
+  title       String
+  description String
+  source      String   // System, Import, AnalystNote, StatusChange
+  
+  incident    Incident @relation(fields: [incidentId], references: [id], onDelete: Cascade)
+}
+
+model Note {
+  id         String   @id @default(uuid())
+  incidentId String
+  userId     String
+  content    String
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  incident   Incident @relation(fields: [incidentId], references: [id], onDelete: Cascade)
+  author     User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model AuditLog {
+  id         String   @id @default(uuid())
+  userId     String?
+  action     String   // e.g., UPDATE_STATUS, UPLOAD_ALERTS, VIEW_REPORT
+  details    String
+  ipAddress  String?
+  createdAt  DateTime @default(now())
+
+  user       User?    @relation(fields: [userId], references: [id], onDelete: SetNull)
+}
+
+model SecurityEvent {
+  id           String        @id @default(uuid())
+  timestamp    DateTime      @default(now())
+  ruleName     String
+  category     String
+  severity     Severity      @default(MEDIUM)
+  sourceIp     String?
+  destIp       String?
+  targetHost   String?
+  details      String
+  mitreAttack  String?
+  incidentId   String?
+  createdAt    DateTime      @default(now())
+  updatedAt    DateTime      @updatedAt
+
+  // Relations
+  incident     Incident?     @relation(fields: [incidentId], references: [id], onDelete: Cascade)
+}
