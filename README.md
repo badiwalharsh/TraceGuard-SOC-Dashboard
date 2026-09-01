@@ -1,4 +1,4 @@
-# TraceGuard SOC — Next-Gen Security Operations Center & Incident Triage Platform
+# TraceGuard SOC — Next-Gen Security Operations Center & Incident Triage Platform (Using AntigravityIDE and SIEM Methodologies)
 
 ![TraceGuard SOC Platform](https://img.shields.io/badge/Security-SOC%20Platform-06b6d4?style=for-the-badge)
 ![Next.js 16](https://img.shields.io/badge/Next.js-16.3.3-000000?style=for-the-badge&logo=nextdotjs)
